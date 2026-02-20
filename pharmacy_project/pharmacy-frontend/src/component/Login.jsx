@@ -1,0 +1,80 @@
+import { useState } from "react";
+
+function Login({ setUser, setView }) {
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        setError(null);
+        setLoading(true);
+
+        fetch("http://127.0.0.1:8000/api/login/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, password }),
+        })
+            .then(async (res) => {
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) throw data;
+                return data;
+            })
+            .then((data) => {
+                setUser({ name: data.username, role: data.role });
+            })
+            .catch((err) => {
+                if (err && typeof err === "object") {
+                    const msgs = Object.values(err).flat().join(" ");
+                    setError(msgs || "Login failed");
+                } else {
+                    setError("Login failed");
+                }
+            })
+            .finally(() => setLoading(false));
+    };
+
+    return (
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,#e8f5e9,#ffffff)" }}>
+            <div className="login-container" style={{ width: "360px", backgroundColor: "white", padding: "28px", borderRadius: "10px", boxShadow: "0 6px 20px rgba(0,0,0,0.08)" }}>
+                <div style={{ textAlign: "center", marginBottom: "12px" }}>
+                    <div style={{ width: "56px", height: "56px", margin: "0 auto", backgroundColor: "#4CAF50", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: "700", fontSize: "20px" }}>SAS</div>
+                    <h2 style={{ color: "#2e7d32", margin: "12px 0 0" }}>Pharmacy Login</h2>
+                    <p style={{ color: "#666", fontSize: "14px", marginTop: "6px" }}>Sign in to access the dashboard</p>
+                </div>
+
+                <form onSubmit={handleLogin}>
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                        style={{ display: "block", margin: "12px 0", width: "100%", padding: "12px", borderRadius: "6px", border: "1px solid #e0e0e0", outline: "none", boxSizing: "border-box" }}
+                    />
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        style={{ display: "block", margin: "12px 0", width: "100%", padding: "12px", borderRadius: "6px", border: "1px solid #e0e0e0" }}
+                    />
+                    {error && <div style={{ color: "#d32f2f", marginBottom: "8px" }}>{error}</div>}
+                    <button type="submit" disabled={loading} style={{ width: "100%", backgroundColor: "#4CAF50", color: "white", padding: "12px", border: "none", borderRadius: "6px", fontWeight: "600", cursor: "pointer", opacity: loading ? 0.7 : 1 }}>
+                        {loading ? "Logging in..." : "Login"}
+                    </button>
+                </form>
+
+                <div style={{ textAlign: "center", marginTop: "14px", color: "#888", fontSize: "13px" }}>
+                    <p>Don't have an account? <button onClick={() => setView('register')} style={{ background: "transparent", border: "none", color: "#2e7d32", cursor: "pointer", fontWeight: 600 }}>Register</button></p>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default Login;
