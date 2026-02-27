@@ -4,6 +4,7 @@ django-cors-headers==4.9.0
 djangorestframework==3.16.1
 dj-database-url==2.2.0
 gunicorn==25.1.0
+whitenoise==6.7.0
 npx==0.1.6
 numpy==2.4.2
 packaging==26.0
