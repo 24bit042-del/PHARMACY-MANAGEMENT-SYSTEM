@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status 
 from rest_framework import response
 from .models import Supplier, Medicine, Sale
@@ -54,6 +55,7 @@ def sale_list(request):
         return response.Response(serializer.errors, status=400) 
 
 
+@csrf_exempt
 @api_view(['POST'])
 def register(request):
     serializer = RegisterSerializer(data=request.data)
@@ -67,6 +69,7 @@ def register(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@csrf_exempt
 @api_view(['POST'])
 def login_view(request):
     username = request.data.get('username')

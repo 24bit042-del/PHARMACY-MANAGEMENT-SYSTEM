@@ -6,12 +6,14 @@ function Login({ setUser, setView }) {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
+    const API_BASE = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
+
     const handleLogin = (e) => {
         e.preventDefault();
         setError(null);
         setLoading(true);
 
-        fetch("http://127.0.0.1:8000/api/login/", {
+        fetch(`${API_BASE}/api/login/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
