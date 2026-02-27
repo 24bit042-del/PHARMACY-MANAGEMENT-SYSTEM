@@ -81,11 +81,15 @@ WSGI_APPLICATION = 'pharmacy_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+DATABASE_URL = os.getenv('DATABASE_URL')
+if not DATABASE_URL:
+    raise RuntimeError('DATABASE_URL is required (set it to your Neon connection string)')
+
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgres://postgres:12345@localhost:5432/DATABASE_2',
+        default=DATABASE_URL,
         conn_max_age=600,
-        ssl_require=False,
+        ssl_require=True,
     )
 }
 
