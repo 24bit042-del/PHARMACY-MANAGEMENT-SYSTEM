@@ -6,7 +6,11 @@ function Login({ setUser, setView }) {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const API_BASE = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
+    const API_BASE =
+        process.env.REACT_APP_API_URL ||
+        (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1"
+            ? "https://pharmacy-backend-jhju.onrender.com"
+            : "http://127.0.0.1:8000");
 
     const handleLogin = (e) => {
         e.preventDefault();
@@ -21,20 +25,37 @@ function Login({ setUser, setView }) {
             body: JSON.stringify({ username, password }),
         })
             .then(async (res) => {
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok) throw data;
-                return data;
+                const raw = await res.text();
+                let data = null;
+                try {
+                    data = raw ? JSON.parse(raw) : null;
+                } catch {
+                    data = null;
+                }
+                if (!res.ok) {
+                    throw { status: res.status, data, text: raw };
+                }
+                return data || {};
             })
             .then((data) => {
                 setUser({ name: data.username, role: data.role });
             })
             .catch((err) => {
+                let msg = "Login failed";
                 if (err && typeof err === "object") {
-                    const msgs = Object.values(err).flat().join(" ");
-                    setError(msgs || "Login failed");
-                } else {
-                    setError("Login failed");
+                    if (err.data && typeof err.data === "object") {
+                        if (err.data.detail) {
+                            msg = err.data.detail;
+                        } else {
+                            const msgs = Object.values(err.data).flat().join(" ");
+                            if (msgs) msg = msgs;
+                        }
+                    } else if (err.text) {
+                        msg = err.text;
+                    }
+                    if (err.status) msg = `${msg} (status ${err.status})`;
                 }
+                setError(msg);
             })
             .finally(() => setLoading(false));
     };

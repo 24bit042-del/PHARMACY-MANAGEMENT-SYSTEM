@@ -10,6 +10,12 @@ function Register({ setUser, setView }) {
 
     const API_BASE = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
 
+    const API_BASE =
+        process.env.REACT_APP_API_URL ||
+        (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1"
+            ? "https://pharmacy-backend-jhju.onrender.com"
+            : "http://127.0.0.1:8000");
+
     const handleRegister = (e) => {
         e.preventDefault();
         setError(null);
@@ -23,27 +29,33 @@ function Register({ setUser, setView }) {
             body: JSON.stringify({ username, password, role }),
         })
             .then(async (res) => {
-                const data = await res.json().catch(() => ({}));
-                console.log('register response', res.status, data);
-                if (!res.ok) {
-                    const registerError = new Error('Registration failed');
-                    registerError.status = res.status;
-                    registerError.body = data;
-                    throw registerError;
+                const raw = await res.text();
+                let data = null;
+                try {
+                    data = raw ? JSON.parse(raw) : null;
+                } catch {
+                    data = null;
                 }
-                return data;
+                if (!res.ok) {
+                    throw { status: res.status, data, text: raw };
+                }
+                return data || {};
             })
             .then((data) => {
                 setUser({ name: data.username, role: data.role });
             })
             .catch((err) => {
-                console.error('register error', err);
-                if (err && typeof err === 'object') {
-                    const msgs = Object.values(err.body || {}).flat().join(' ');
-                    setError(msgs || 'Registration failed');
-                } else {
-                    setError('Registration failed');
+                let msg = "Registration failed";
+                if (err && typeof err === "object") {
+                    if (err.data && typeof err.data === "object") {
+                        const msgs = Object.values(err.data).flat().join(" ");
+                        if (msgs) msg = msgs;
+                    } else if (err.text) {
+                        msg = err.text;
+                    }
+                    if (err.status) msg = `${msg} (status ${err.status})`;
                 }
+                setError(msg);
             })
             .finally(() => setLoading(false));
     };
