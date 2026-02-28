@@ -1,16 +1,11 @@
 import { useState } from "react";
+import { API_BASE } from "../config";
 
 function Login({ setUser, setView }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-
-    const API_BASE =
-        process.env.REACT_APP_API_URL ||
-        (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1"
-            ? "https://pharmacy-backend-jhju.onrender.com"
-            : "http://127.0.0.1:8000");
 
     const handleLogin = (e) => {
         e.preventDefault();
