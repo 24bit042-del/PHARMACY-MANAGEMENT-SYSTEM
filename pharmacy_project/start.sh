@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
+export DJANGO_SETTINGS_MODULE=pharmacy_project.settings
+
 python manage.py migrate --noinput
 
 python - <<'PY'
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pharmacy_project.settings")
+import django
+django.setup()
+
 from django.contrib.auth.models import User
 from phrmacyapp.models import Profile
 
