@@ -30,7 +30,11 @@ function Register({ setUser, setView }) {
                     data = null;
                 }
                 if (!res.ok) {
-                    throw { status: res.status, data, text: raw };
+                    const err = new Error("Register request failed");
+                    err.status = res.status;
+                    err.data = data;
+                    err.text = raw;
+                    throw err;
                 }
                 return data || {};
             })
@@ -40,8 +44,9 @@ function Register({ setUser, setView }) {
             .catch((err) => {
                 let msg = "Registration failed";
                 if (err && typeof err === "object") {
-                    if (err.data && typeof err.data === "object") {
-                        const msgs = Object.values(err.data).flat().join(" ");
+                    const data = err.data;
+                    if (data && typeof data === "object") {
+                        const msgs = Object.values(data).flat().join(" ");
                         if (msgs) msg = msgs;
                     } else if (err.text) {
                         msg = err.text;

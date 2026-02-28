@@ -28,7 +28,11 @@ function Login({ setUser, setView }) {
                     data = null;
                 }
                 if (!res.ok) {
-                    throw { status: res.status, data, text: raw };
+                    const err = new Error("Login request failed");
+                    err.status = res.status;
+                    err.data = data;
+                    err.text = raw;
+                    throw err;
                 }
                 return data || {};
             })
@@ -38,11 +42,12 @@ function Login({ setUser, setView }) {
             .catch((err) => {
                 let msg = "Login failed";
                 if (err && typeof err === "object") {
-                    if (err.data && typeof err.data === "object") {
-                        if (err.data.detail) {
-                            msg = err.data.detail;
+                    const data = err.data;
+                    if (data && typeof data === "object") {
+                        if (data.detail) {
+                            msg = data.detail;
                         } else {
-                            const msgs = Object.values(err.data).flat().join(" ");
+                            const msgs = Object.values(data).flat().join(" ");
                             if (msgs) msg = msgs;
                         }
                     } else if (err.text) {
