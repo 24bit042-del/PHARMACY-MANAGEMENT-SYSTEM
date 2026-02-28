@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_BASE } from "../config";
 
 function Suppliers({ user }) {
     const [suppliers, setSuppliers] = useState([]);
@@ -11,7 +12,7 @@ function Suppliers({ user }) {
     }, []);
 
     const fetchSuppliers = () => {
-        fetch("http://127.0.0.1:8000/api/suppliers/")
+        fetch(`${API_BASE}/api/suppliers/`)
             .then(res => res.json())
             .then(data => setSuppliers(data));
     };
@@ -19,7 +20,7 @@ function Suppliers({ user }) {
     const addSupplier = (e) => {
         e.preventDefault();
 
-        fetch("http://127.0.0.1:8000/api/suppliers/", {
+        fetch(`${API_BASE}/api/suppliers/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -37,13 +38,13 @@ function Suppliers({ user }) {
     };
 
     const deleteSupplier = (id) => {
-        fetch(`http://127.0.0.1:8000/api/suppliers/${id}/`, { method: 'DELETE' }).then(() => fetchSuppliers());
+        fetch(`${API_BASE}/api/suppliers/${id}/`, { method: 'DELETE' }).then(() => fetchSuppliers());
     };
 
     const editSupplier = (id) => {
         const newName = prompt('New name');
         if (!newName) return;
-        fetch(`http://127.0.0.1:8000/api/suppliers/${id}/`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newName }) }).then(() => fetchSuppliers());
+        fetch(`${API_BASE}/api/suppliers/${id}/`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newName }) }).then(() => fetchSuppliers());
     };
 
     return (

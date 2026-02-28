@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_BASE } from "../config";
 
 function Sales({ user }) {
     const [sales, setSales] = useState([]);
@@ -11,7 +12,7 @@ function Sales({ user }) {
     }, []);
 
     const fetchSales = () => {
-        fetch("http://127.0.0.1:8000/api/sales/")
+        fetch(`${API_BASE}/api/sales/`)
             .then(res => res.json())
             .then(data => setSales(data));
     };
@@ -21,7 +22,7 @@ function Sales({ user }) {
     const addSale = (e) => {
         e.preventDefault();
         setError(null);
-        fetch("http://127.0.0.1:8000/api/sales/", {
+        fetch(`${API_BASE}/api/sales/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -52,13 +53,13 @@ function Sales({ user }) {
     };
 
     const deleteSale = (id) => {
-        fetch(`http://127.0.0.1:8000/api/sales/${id}/`, { method: 'DELETE' }).then(() => fetchSales());
+        fetch(`${API_BASE}/api/sales/${id}/`, { method: 'DELETE' }).then(() => fetchSales());
     };
 
     const editSale = (id) => {
         const qty = prompt('New quantity sold');
         if (qty === null) return;
-        fetch(`http://127.0.0.1:8000/api/sales/${id}/`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ quantity_sold: parseInt(qty) }) }).then(() => fetchSales());
+        fetch(`${API_BASE}/api/sales/${id}/`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ quantity_sold: parseInt(qty) }) }).then(() => fetchSales());
     };
 
     return (

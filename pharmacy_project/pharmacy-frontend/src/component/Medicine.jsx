@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_BASE } from "../config";
 
 function Medicines({ user }) {
     const [medicines, setMedicines] = useState([]);
@@ -17,7 +18,7 @@ function Medicines({ user }) {
 
 
     const fetchMedicines = () => {
-        fetch("http://127.0.0.1:8000/api/medicines/")
+        fetch(`${API_BASE}/api/medicines/`)
             .then(res => res.json())
             .then(data => setMedicines(data));
     };
@@ -25,7 +26,7 @@ function Medicines({ user }) {
     const addMedicine = (e) => {
         e.preventDefault();
         setError(null);
-        fetch("http://127.0.0.1:8000/api/medicines/", {
+        fetch(`${API_BASE}/api/medicines/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -66,13 +67,13 @@ function Medicines({ user }) {
             });
     };
     const deleteMedicine = (id) => {
-        fetch(`http://127.0.0.1:8000/api/medicines/${id}/`, {
+        fetch(`${API_BASE}/api/medicines/${id}/`, {
             method: 'DELETE',
         }).then(() => fetchMedicines());
     };
 
     const editMedicine = (id, updates) => {
-        fetch(`http://127.0.0.1:8000/api/medicines/${id}/`, {
+        fetch(`${API_BASE}/api/medicines/${id}/`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updates),

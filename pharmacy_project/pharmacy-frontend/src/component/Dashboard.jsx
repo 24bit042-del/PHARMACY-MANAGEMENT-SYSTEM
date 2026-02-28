@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_BASE } from "../config";
 import Medicine from "./Medicine";
 import Sale from "./Sale";
 import Supplier from "./Supplier";
@@ -16,7 +17,7 @@ function Dashboard({ user, setUser }) {
     }, []);
 
     const fetchTotals = () => {
-        fetch("http://127.0.0.1:8000/api/medicines/")
+        fetch(`${API_BASE}/api/medicines/`)
             .then(res => {
                 if (!res.ok) throw new Error("Failed to fetch medicines");
                 return res.json();
@@ -27,7 +28,7 @@ function Dashboard({ user, setUser }) {
             })
             .catch(err => console.log("Error fetching medicines:", err));
 
-        fetch("http://127.0.0.1:8000/api/sales/")
+        fetch(`${API_BASE}/api/sales/`)
             .then(res => {
                 if (!res.ok) throw new Error("Failed to fetch sales");
                 return res.json();
