@@ -4,7 +4,6 @@ import { API_BASE } from "../config";
 function Register({ setUser, setView }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [role, setRole] = useState("pharmacist");
     const [error, setError] = useState(null);
 
     const [loading, setLoading] = useState(false);
@@ -19,7 +18,7 @@ function Register({ setUser, setView }) {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ username, password, role }),
+            body: JSON.stringify({ username, password }),
         })
             .then(async (res) => {
                 const raw = await res.text();
@@ -83,15 +82,6 @@ function Register({ setUser, setView }) {
                         required
                         style={{ display: "block", margin: "12px 0", width: "100%", padding: "12px", borderRadius: "6px", border: "1px solid #e0e0e0" }}
                     />
-                    <select
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                        style={{ display: "block", margin: "12px 0", width: "100%", padding: "12px", borderRadius: "6px", border: "1px solid #e0e0e0", backgroundColor: "white" }}
-                    >
-                        <option value="pharmacist">Pharmacist</option>
-                        <option value="admin">Admin</option>
-                    </select>
-
                     
 
                     {error && <div style={{ color: "#d32f2f", marginBottom: "8px" }}>{error}</div>}

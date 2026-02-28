@@ -98,7 +98,7 @@ class SaleSerializer(serializers.ModelSerializer):
 class RegisterSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
-    role = serializers.ChoiceField(choices=Profile.ROLE_CHOICES)
+    role = serializers.ChoiceField(choices=Profile.ROLE_CHOICES, required=False, default="pharmacist")
 
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
